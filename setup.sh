@@ -3,6 +3,11 @@
 # รันครั้งเดียวหลัง clone: bash setup.sh
 set -e
 KIT="$(cd "$(dirname "$0")" && pwd)"
+PYBIN="$(command -v python3 || command -v python || true)"
+if [ -z "$PYBIN" ]; then
+  echo "ต้องมี python (python3 หรือ python) ในเครื่องก่อนรัน setup — ติดตั้งแล้วรันใหม่"
+  exit 1
+fi
 echo "== Agis Method — setup =="
 echo "(กด Enter เพื่อใช้ค่าดีฟอลต์ในวงเล็บ)"
 echo
@@ -12,7 +17,7 @@ read -r -p "ชื่อคุณ (เจ้าของ) [ผู้ใช้]: 
 read -r -p "บทบาท/อาชีพของคุณ [ผู้ใช้ทั่วไป]: " YOUR_ROLE; YOUR_ROLE="${YOUR_ROLE:-ผู้ใช้ทั่วไป}"
 read -r -p "ภาษาที่ให้ผู้ช่วยตอบ [ไทย]: " LANGUAGE; LANGUAGE="${LANGUAGE:-ไทย}"
 
-python3 - "$KIT" "$ASSISTANT_NAME" "$YOUR_NAME" "$YOUR_ROLE" "$LANGUAGE" <<'PY'
+"$PYBIN" - "$KIT" "$ASSISTANT_NAME" "$YOUR_NAME" "$YOUR_ROLE" "$LANGUAGE" <<'PY'
 import os, sys
 kit, aname, yname, yrole, lang = sys.argv[1:6]
 repl = {

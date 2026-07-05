@@ -13,6 +13,10 @@
 
 > ทั้งหมดนี้ **ไม่มีข้อมูลส่วนตัวของใครติดมา** — genericize แล้ว เอาขึ้น public ได้
 
+> 🤖 **ใช้กับ AI ตัวไหนก็ได้ ไม่จำกัดแค่ Claude** — กฎเป็นกลาง (`AGENTS.md`) ใช้กับ Cursor, Windsurf,
+> Cline, Gemini CLI, Codex, Copilot ฯลฯ ได้. ทางง่ายสุด: paste prompt ใน **[PROMPT.md](PROMPT.md)**
+> ให้ AI ของคุณเซ็ตให้เอง. รายละเอียด **[ADOPTING.md](ADOPTING.md)**
+
 ---
 
 ## ทำงานยังไง — ทีม 3 ชั้น
@@ -72,6 +76,10 @@ claude
 
 จากนั้นเอา `global-CLAUDE.template.md` ไปวางเป็น `~/.claude/CLAUDE.md` (ถ้ามีอยู่แล้วให้ merge)
 แล้วแก้ `{{...}}` ที่เหลือใน `CLAUDE.md`
+
+> **มีโปรเจกต์อยู่แล้ว** (มี `CLAUDE.md` / hooks ของตัวเอง)? **อย่า clone ทับ** — ดูวิธี merge ที่
+> **[ADOPTING.md](ADOPTING.md)**.
+> **ต้องมี:** bash (Windows ใช้ Git Bash หรือ WSL) + python 3.x (`python3` หรือ `python` ก็ได้ hook เลือกเอง)
 
 ## มีอะไรในกล่อง
 

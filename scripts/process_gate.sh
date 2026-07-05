@@ -2,7 +2,9 @@
 # UserPromptSubmit hook — inject "Process Gate" เฉพาะ prompt ที่เป็นคำสั่งงานจริง
 # ข้าม: system message, slash command, prompt สั้น (ตอบรับ/คุยต่อ)
 # ทำไมต้องเป็น hook: text เตือนใน CLAUDE.md เป็นแค่ nudge — hook คือการ "บังคับ" ให้เห็นทุก prompt
-PROMPT=$(python3 -c "import json,sys; print(json.load(sys.stdin).get('prompt',''))" 2>/dev/null)
+PY="$(command -v python3 || command -v python)"
+[ -z "$PY" ] && exit 0   # ไม่มี python (เช่น Windows มีแต่ 'python') → ข้ามแบบไม่พังทั้ง session
+PROMPT=$("$PY" -c "import json,sys; print(json.load(sys.stdin).get('prompt',''))" 2>/dev/null)
 
 case "$PROMPT" in
   "<task-notification>"*|"<local-command"*|"Caveat:"*|/*) exit 0 ;;

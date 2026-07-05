@@ -1,7 +1,9 @@
 #!/bin/bash
 # UserPromptSubmit hook — จับสัญญาณว่าผู้ใช้กำลัง "correct" งาน → เตือนให้ปิดวงจร Lesson Loop
 # (บันทึก lessons.md + patch ชั้นที่เกี่ยว) — nudge 1 บรรทัด ราคาถูก แต่กันลืมได้จริง
-PROMPT=$(python3 -c "import json,sys; print(json.load(sys.stdin).get('prompt',''))" 2>/dev/null)
+PY="$(command -v python3 || command -v python)"
+[ -z "$PY" ] && exit 0   # ไม่มี python (เช่น Windows มีแต่ 'python') → ข้ามแบบไม่พังทั้ง session
+PROMPT=$("$PY" -c "import json,sys; print(json.load(sys.stdin).get('prompt',''))" 2>/dev/null)
 
 case "$PROMPT" in
   "<task-notification>"*|"<local-command"*|"Caveat:"*|/*) exit 0 ;;

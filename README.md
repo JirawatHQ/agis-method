@@ -15,6 +15,10 @@ one-off answer machine into an assistant that is:
 
 > Everything here is **genericized and free of any personal data** — safe to publish and fork.
 
+> 🤖 **Any AI, not just Claude.** The rules are tool-agnostic (`AGENTS.md`) — use them with Cursor,
+> Windsurf, Cline, Gemini CLI, Codex, Copilot, and more. Easiest path: paste the prompt in
+> **[PROMPT.md](PROMPT.md)** and let your own AI set it up. Details in **[ADOPTING.md](ADOPTING.md)**.
+
 > ℹ️ **Language note:** the framework prose (CLAUDE.md, skills, templates) is written in **Thai**, the
 > author's language. The *structure* is language-agnostic — translate `CLAUDE.md` to your language, or
 > keep it bilingual. The mechanisms below work regardless of language.
@@ -79,6 +83,10 @@ claude
 Then take `global-CLAUDE.template.md` to `~/.claude/CLAUDE.md` (merge if you already have one), and
 fill in the remaining `{{...}}` placeholders in `CLAUDE.md`.
 
+> **Already have a project** (with its own `CLAUDE.md` / hooks)? **Don't clone over it** — see
+> **[ADOPTING.md](ADOPTING.md)** for the merge recipe.
+> **Requirements:** bash (Git Bash or WSL on Windows) + python 3.x (`python3` *or* `python` — auto-detected).
+
 ## What's in the box
 
 | Part | File | What it is |
@@ -115,7 +123,7 @@ attribution; please keep upstream credit when redistributing. Licensed under [MI
 
 ---
 ## Connections
-<!-- this repo is itself an Obsidian vault; [[wiki links]] are intentional -->
+<!-- this repo is itself an Obsidian vault; the wiki-style links below are intentional -->
 - [[CLAUDE]]
 - [[README.th]]
 - [[global-CLAUDE.template]]

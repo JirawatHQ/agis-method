@@ -3,7 +3,9 @@
 # จุดประสงค์: กัน orphan ใน Obsidian graph — ทุกไฟล์ต้องมีขอบเชื่อมอย่างน้อย 1 เส้น
 # path ใช้ $CLAUDE_PROJECT_DIR (Claude Code ส่งให้) → พกพาได้ ไม่ต้อง hardcode
 INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('file_path',''))" 2>/dev/null)
+PY="$(command -v python3 || command -v python)"
+[ -z "$PY" ] && exit 0   # ไม่มี python (เช่น Windows มีแต่ 'python') → ข้ามแบบไม่พัง
+FILE_PATH=$(echo "$INPUT" | "$PY" -c "import json,sys; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('file_path',''))" 2>/dev/null)
 ROOT="${CLAUDE_PROJECT_DIR:-$PWD}"
 
 [[ "$FILE_PATH" != *.md ]] && exit 0
@@ -29,7 +31,7 @@ case "$RELATIVE" in
 esac
 
 printf "\n---\n## Connections\n%b\n" "$CONNECTIONS" >> "$FILE_PATH"
-python3 - "$RELATIVE" <<'PYEOF'
+"$PY" - "$RELATIVE" <<'PYEOF'
 import json, sys
 rel = sys.argv[1]
 msg = (f"[GRAPH] hook เติม ## Connections ต่อท้าย {rel} อัตโนมัติแล้ว (เดาจาก path) — "
