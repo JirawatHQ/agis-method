@@ -1,61 +1,121 @@
-# Agis Method — starter kit สำหรับ Claude Code
+**English** · [ภาษาไทย](README.th.md)
 
-**"วิธีการทำงาน" ของผู้ช่วย AI ส่วนตัวที่ใช้จริง — แพ็กเป็น template ให้ก็อปไปตั้งของตัวเองได้**
+# Agis Method — a disciplined operating framework for Claude Code
 
-ไม่ใช่แอป ไม่ใช่ปลั๊กอิน — เป็น **ชุดกฎ + hooks + โครงสร้าง** ที่ทำให้ Claude Code:
-- **มีวินัย** — ประกาศเจตนาก่อนลงมือทุกงาน (Process Gate) ไม่พุ่งทำมั่ว
-- **เรียนรู้จากที่ผิด** — ทุก correction ต้องจบด้วย patch ถาวร (Lesson Loop)
-- **ไม่เริ่มจากศูนย์** — ดึงจาก knowledge base/skill ที่มีก่อนเสมอ (Second Brain)
-- **จัดระบบงานเป็นทีม** — Orchestrator → Team Lead (subagent) → Worker
-- **จำได้ข้ามครั้ง** — ระบบ memory + wiki + daily note ที่เชื่อมกันเป็นกราฟเดียว
+**The "way of working" of a real personal AI assistant, packaged as a template you can clone and make your own.**
 
-> ทั้งหมดนี้ **ไม่มีข้อมูลส่วนตัวของใครติดมา** — genericize แล้ว เอาขึ้น public ได้
+Not an app, not a plugin — a set of **rules + hooks + structure** that turns Claude Code from a
+one-off answer machine into an assistant that is:
+
+- **Disciplined** — declares its intent before acting on any real task (Process Gate), instead of rushing in
+- **Self-improving** — every correction must end in a permanent patch (Lesson Loop): the more it errs, the better it gets
+- **A second brain** — always consults your existing knowledge/skills first, never starts from scratch
+- **Team-structured** — Orchestrator → Team Lead (subagent) → Worker
+- **Persistent** — a memory + wiki + daily-note system, all wired into one Obsidian graph
+
+> Everything here is **genericized and free of any personal data** — safe to publish and fork.
+
+> ℹ️ **Language note:** the framework prose (CLAUDE.md, skills, templates) is written in **Thai**, the
+> author's language. The *structure* is language-agnostic — translate `CLAUDE.md` to your language, or
+> keep it bilingual. The mechanisms below work regardless of language.
 
 ---
 
-## เริ่มใช้ (3 ขั้น)
+## How it works — the 3-tier team
+
+You talk to one **Orchestrator**. It routes each task to a **Team Lead** (a real Claude Code subagent),
+who may delegate to a **Worker**, then summarizes back up to you.
+
+```mermaid
+flowchart TD
+    U(["👤 You"]) -->|request| O["🎯 Tier 1 — Orchestrator<br/>your assistant"]
+    O -->|route| L1["Tier 2 — Lead: research"]
+    O -->|route| L2["Tier 2 — Lead: your domain"]
+    O -->|route| L3["Tier 2 — Lead: taskmaster"]
+    L1 --> W1["Tier 3 — Worker"]
+    L2 --> W2a["Tier 3 — Worker A"]
+    L2 --> W2b["Tier 3 — Worker B"]
+    L3 --> W3["Tier 3 — Worker"]
+    W1 -.summary.-> O
+    W2a -.summary.-> O
+    W2b -.summary.-> O
+    W3 -.summary.-> O
+    O -->|answer| U
+```
+
+## The discipline loop — why it stays sharp
+
+Two hooks fire on every prompt. The **Process Gate** forces a plan before work; the **Lesson Loop**
+turns every correction into a permanent fix at the right layer.
+
+```mermaid
+flowchart LR
+    P([Prompt]) --> G{"Process Gate<br/>declare 4 things"}
+    G --> Work["Do the work"]
+    Work --> C{"User corrects?"}
+    C -->|yes| Lesson["Lesson Loop:<br/>log + patch a<br/>permanent layer"]
+    Lesson --> Better[("System<br/>improves")]
+    C -->|no| Done(["Done +<br/>update spec.md"])
+    Better -.-> P
+```
+
+**Patch ladder** (where a lesson gets fixed, most-permanent first): `hook` → `skill` → `CLAUDE.md`/`memory` → `wiki`.
+
+---
+
+## Quick start
 
 ```bash
-# 1. clone เข้าโฟลเดอร์ที่จะเป็น "vault" ของคุณ
-git clone <repo-url> my-assistant && cd my-assistant
+# 1. clone into the folder that will become your "vault"
+git clone https://github.com/JirawatHQ/agis-method my-assistant && cd my-assistant
 
-# 2. รัน setup — จะถามชื่อผู้ช่วย/บทบาท/ภาษา แล้วเติมให้อัตโนมัติ
+# 2. run setup — it asks for the assistant's name / your role / language, then fills them in
 bash setup.sh
 
-# 3. เปิด Claude Code ในโฟลเดอร์นี้ → hooks ทำงานเองทันที
+# 3. open Claude Code in this folder → hooks activate automatically
 claude
 ```
 
-จากนั้นแก้ `{{...}}` ที่เหลือใน `CLAUDE.md` กับ `global-CLAUDE.template.md` ให้เข้ากับตัวเอง
+Then take `global-CLAUDE.template.md` to `~/.claude/CLAUDE.md` (merge if you already have one), and
+fill in the remaining `{{...}}` placeholders in `CLAUDE.md`.
 
-## มีอะไรในกล่อง
+## What's in the box
 
-| ส่วน | ไฟล์ | คืออะไร |
-|------|------|---------|
-| กฎหลัก | `CLAUDE.md` | เฟรมเวิร์กทั้งหมด (Process Gate, Lesson Loop, Second Brain, ...) |
-| ตัวตน | `global-CLAUDE.template.md` | identity ของผู้ช่วย → ก็อปไป `~/.claude/CLAUDE.md` |
-| กลไกบังคับ | `scripts/*.sh` + `.claude/settings.json` | hooks — process gate, lesson loop, graph hygiene |
-| ทีม | `.claude/agents/` + `teams/` | โครง Orchestrator → Lead → Worker (มี `_TEMPLATE`) |
-| ความรู้ | `context/wiki/` | knowledge base ที่ distill แล้ว (เริ่มเปล่า) |
-| ความจำ | `context/memory/` + `MEMORY.md` | ระบบ memory + graph mirror |
-| เครื่องมือ | `.claude/skills/` | **11 skills ทั่วไป** พร้อมใช้ (ดู `.claude/skills/README.md`) |
-| graph | `context/admin/obsidian_graph.py` | รักษากราฟ Obsidian ไม่ให้ orphan/broken |
+| Part | File | What it is |
+|------|------|-----------|
+| Core rules | `CLAUDE.md` | The full framework (Process Gate, Lesson Loop, Second Brain, protocols) |
+| Identity | `global-CLAUDE.template.md` | The assistant's persona → copy to `~/.claude/CLAUDE.md` |
+| Enforcement | `scripts/*.sh` + `.claude/settings.json` | Hooks — process gate, lesson loop, graph hygiene |
+| Teams | `.claude/agents/` + `teams/` | Orchestrator → Lead → Worker (with `_TEMPLATE` files) |
+| Knowledge | `context/wiki/` | Distilled knowledge base (starts empty) |
+| Memory | `context/memory/` + `MEMORY.md` | Memory system + Obsidian graph mirror |
+| Tools | `.claude/skills/` | **11 general-purpose skills**, ready to use |
+| Graph | `context/admin/obsidian_graph.py` | Keeps the Obsidian graph free of orphans/broken links |
 
-## ปรัชญาเบื้องหลัง
-> **hook > text.** ข้อความเตือนใน CLAUDE.md เป็นแค่ nudge — LLM ข้ามได้ตลอด.
-> การบังคับจริงคือ hook ที่รันทุกครั้ง. ทุกกฎสำคัญในนี้จึงมี hook หนุนหลัง
+Portability: hooks reference `$CLAUDE_PROJECT_DIR`, so cloning "just works" — **no path editing needed**.
 
-> **ยิ่งผิด ยิ่งเก่ง.** ระบบไม่ได้สมบูรณ์ตั้งแต่แรก — มันดีขึ้นเพราะทุกครั้งที่พลาด
-> ถูกบันทึกและ patch ลงชั้นถาวร (Lesson Loop) ใช้ไปเรื่อยๆ มันจะรู้จักคุณมากขึ้น
+## Philosophy
 
-## ปรับให้เป็นของคุณ
-- **ทีม:** ลบทีมตัวอย่าง สร้างทีมตามชีวิตจริง (ก็อป `_TEMPLATE-lead.md`)
-- **skills:** เก็บที่ใช้ ลบที่ไม่ใช้ เพิ่มใหม่ผ่าน Ingest Workflow (ดู `CLAUDE.md`)
-- **hooks:** เปิด/ปิดใน `.claude/settings.json`
+> **Hook > text.** A reminder in `CLAUDE.md` is only a nudge — an LLM can always skip it.
+> Real enforcement is a hook that runs every time. Every important rule here is backed by a hook.
 
-## เครดิต
-Skills บางตัวกลั่น/รวบรวมมาจากงานสาธารณะของชุมชน — ดูที่มาใน `.claude/skills/README.md`
+> **The more it errs, the better it gets.** The system isn't perfect on day one — it improves because
+> every mistake is logged and patched into a permanent layer (the Lesson Loop). Use it, and it learns you.
 
+## Make it yours
+
+- **Teams:** delete the examples, create teams that fit your life (copy `_TEMPLATE-lead.md`)
+- **Skills:** keep what you use, drop the rest, add new ones via the Ingest Workflow (see `CLAUDE.md`)
+- **Hooks:** toggle them in `.claude/settings.json`
+
+## Credits & License
+
+Some skills are distilled/adapted from public community work — see `.claude/skills/README.md` for
+attribution; please keep upstream credit when redistributing. Licensed under [MIT](LICENSE).
+
+---
 ## Connections
+<!-- this repo is itself an Obsidian vault; [[wiki links]] are intentional -->
 - [[CLAUDE]]
+- [[README.th]]
 - [[global-CLAUDE.template]]
