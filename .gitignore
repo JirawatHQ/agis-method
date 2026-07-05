@@ -1,0 +1,16 @@
+# OS / editor noise
+.DS_Store
+__pycache__/
+*.pyc
+
+# Obsidian per-machine state
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+
+# personal / per-machine overrides (ผู้ใช้แต่ละคนตั้งเอง — ไม่ commit)
+.claude/settings.local.json
+
+# ถ้าคุณ commit ความรู้/ความจำจริง (มี PII) ให้พิจารณา ignore ด้านล่างนี้
+# context/rawdata/
+# context/memory/*.md
